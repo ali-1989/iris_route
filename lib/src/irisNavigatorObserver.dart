@@ -109,15 +109,14 @@ class IrisNavigatorObserver with NavigatorObserver  /*NavigatorObserver or Route
 
   static Route? onGenerateRoute(RouteSettings settings) {
     if(kIsWeb){
-      print('\n ******************** onGenerateRoute: ${settings.name} | ${web.getCurrentWebAddress()} | ${web.getBaseWebAddress()},  empty:${_routeList.isEmpty}');//todo
 
       if(_routeList.isEmpty && web.getCurrentWebAddress() != web.getBaseWebAddress()) {
         final address = web.getCurrentWebAddress();
-        final lastPath = getLastPart(address);
+        final lastPath = _getLastPart(address);
 
         for(final i in webRoutes){
           if(i.routeName.toLowerCase() == lastPath.toLowerCase()){
-            print('------------------- name: ${settings.name},  ${settings.arguments}');
+
             return MaterialPageRoute(
                 builder: (ctx){
                   return i.view;
@@ -149,7 +148,15 @@ class IrisNavigatorObserver with NavigatorObserver  /*NavigatorObserver or Route
     web.changeAddressBar(url);
   }
 
-  static String getLastPart(String address){
+  static String lastRoute(){
+    return _routeList.top();
+  }
+
+  static List<String> routes(){
+    return _routeList.toList();
+  }
+
+  static String _getLastPart(String address){
     final split = address.split('/');
 
     if(split.length > 1){
