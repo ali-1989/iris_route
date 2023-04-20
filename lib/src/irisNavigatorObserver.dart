@@ -83,7 +83,6 @@ class IrisNavigatorObserver with NavigatorObserver  /*NavigatorObserver or Route
   void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
     super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
 
-
     String? name = newRoute?.settings.name;
 
     if(homeName.toLowerCase() == name?.toLowerCase()){

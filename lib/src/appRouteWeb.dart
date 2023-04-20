@@ -27,6 +27,7 @@ void changeAddressBar(String url, {dynamic data, bool reload = false}) async {
     return;
   }
 
+  print('@@@@@@@@@@@@@@@@ > url: $url');
   await Future.delayed(const Duration(milliseconds: 50));
 
   if(reload) {
