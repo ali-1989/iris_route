@@ -8,7 +8,7 @@ import 'package:iris_route/src/appRouteNoneWeb.dart'
 if (dart.library.html) 'package:iris_route/src/appRouteWeb.dart' as web;
 
 
-class IrisNavigatorObserver with NavigatorObserver  /*NavigatorObserver or RouteObserver*/ {
+class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or RouteObserver*/ {
   static final IrisNavigatorObserver _instance = IrisNavigatorObserver._();
   static final StackList<String> _routeList = StackList();
   static final List<MapEntry<int, String>> _routeToLabel = [];
