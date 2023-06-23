@@ -29,6 +29,7 @@ void changeAddressBar(String url, {dynamic data, bool reload = false}) async {
 
   await Future.delayed(const Duration(milliseconds: 50));
 
+  print('@@@@@@@@@@ change to $url');
   if(reload) {
     // can press Back button
     html.window.history.pushState(data, '', url);
@@ -43,7 +44,7 @@ void clearAddressBar() {
   if(!kIsWeb) {
     return;
   }
-
+  print('@@@@@@@@@@ clear');
   final location = '${html.window.location.protocol}//${html.window.location.host}/';
   html.window.history.replaceState(html.window.history.state, '', location);
 }
@@ -65,5 +66,6 @@ String getCurrentWebAddress() {
 }
 
 void backAddressBar() {
+  print('@@@@@@@@@@ back');
   html.window.history.back();
 }

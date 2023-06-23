@@ -146,7 +146,7 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
     web.changeAddressBar(url);
   }
 
-  static String appUrl(){
+  static String appBaseUrl(){
     return web.getBaseWebAddress();
   }
 
