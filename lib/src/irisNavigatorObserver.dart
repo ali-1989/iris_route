@@ -48,6 +48,7 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
       _routeList.push(name);
     }
 
+    print('########## push');
     _changeAddressBar();
   }
 
@@ -56,6 +57,7 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
     super.didPop(route, previousRoute);
 
     _routeList.pop();
+    print('########## pop');
     _changeAddressBar();
   }
 
@@ -76,6 +78,7 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
       _routeList.popUntil(name);
     }
 
+    print('########## remove');
     _changeAddressBar();
   }
 
@@ -99,15 +102,18 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
       _routeList.push(name);
     }
 
+    print('########## replace');
     _changeAddressBar();
   }
 
   static Route? onUnknownRoute(RouteSettings settings) {
+    print('########## onUnknownRoute');
     return null;
   }
 
   static Route? onGenerateRoute(RouteSettings settings) {
     if(kIsWeb){
+      print('########## onGenerateRoute');
       if(_routeList.isEmpty && web.getCurrentWebAddress() != web.getBaseWebAddress()) {
         final address = web.getCurrentWebAddress();
         final lastPath = _getLastPart(address);
