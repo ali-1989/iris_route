@@ -108,17 +108,16 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
 
   static Route? onGenerateRoute(RouteSettings settings) {
     if(kIsWeb){
-
       if(_routeList.isEmpty && web.getCurrentWebAddress() != web.getBaseWebAddress()) {
         final address = web.getCurrentWebAddress();
         final lastPath = _getLastPart(address);
 
-        for(final i in webRoutes){
-          if(i.routeName.toLowerCase() == lastPath.toLowerCase()){
+        for(final r in webRoutes){
+          if(r.routeName.toLowerCase() == lastPath.toLowerCase()){
 
             return MaterialPageRoute(
                 builder: (ctx){
-                  return i.view;
+                  return r.view;
                 },
                 settings: settings);
           }
@@ -147,11 +146,35 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
     web.changeAddressBar(url);
   }
 
+  static String appUrl(){
+    return web.getBaseWebAddress();
+  }
+
+  static String currentUrl(){
+    return web.getCurrentWebAddress();
+  }
+
+  static String currentPath(){
+    final fullUrl = web.getCurrentWebAddress();
+    final baseUrl = web.getBaseWebAddress();
+
+    if(fullUrl.startsWith(baseUrl)){
+      return fullUrl.substring(baseUrl.length);
+    }
+
+    return fullUrl;
+  }
+
+  static List<String> pathSegments(){
+    final paths = currentPath();
+    return paths.split('/');
+  }
+
   static String lastRoute(){
     return _routeList.top();
   }
 
-  static List<String> routes(){
+  static List<String> currentRoutes(){
     return _routeList.toList();
   }
 
@@ -193,6 +216,3 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
     return res;
   }
 }
-
-
-

@@ -53,7 +53,7 @@ class IrisRouterDelegate<T> extends RouterDelegate<T> with ChangeNotifier, PopNa
 
   @override
   Future<bool> popRoute() async {
-    print('-------------------------------------------------- p1');
+    print('-------------------------------------------------- pop 1');
     return false;
   }
 

@@ -4,7 +4,7 @@ class WebRoute {
   late String routeName;
   late Widget view;
   String? routeAddress;
-  bool show404OnInvalidAddress = false;
+  bool show404OnInvalidSupPath = false;
 
   WebRoute();
 
