@@ -158,10 +158,10 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
       url += '$sec/';
     }
 
-    print('###### cange: $url');
     final lastPage = getLastPathSegmentWitQuery(web.getCurrentWebAddress());
+    print('###### cange 1: url:$url, last:$lastPage');
 
-    if(!url.endsWith(lastPage)){
+    if(!url.endsWith(lastPage) && !url.endsWith('$lastPage/')){
       url += lastPage;
     }
     /*final query = getPathQuery(web.getCurrentWebAddress());
@@ -169,7 +169,7 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
     if(query.isNotEmpty) {
       url += '?$query';
     }*/
-    print('###### cange 2: $url , $lastPage');
+    print('###### cange 2: url:$url , lastP:$lastPage');
 
     web.changeAddressBar(url);
   }
