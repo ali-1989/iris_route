@@ -23,6 +23,8 @@ void changeAddressBar(String url, {dynamic data, bool reload = false}) async {
     }
   }
 
+  url = url.replaceAll('//', '/');
+  url = url.replaceFirst('/:', '//:');
 
   await Future.delayed(const Duration(milliseconds: 50));
   if(url == getCurrentWebAddress()){

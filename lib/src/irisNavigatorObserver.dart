@@ -169,7 +169,7 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
     if(query.isNotEmpty) {
       url += '?$query';
     }*/
-    print('###### cange 2: url:$url , lastP:$lastPage');
+    print('###### cange 2: url:$url , ');
 
     web.changeAddressBar(url);
   }
