@@ -3,8 +3,6 @@
 void changeAddressBar(String url, {dynamic data, bool reload = false}) {
 }
 
-void backAddressBar() {}
-
 String getCurrentWebAddress() {
   return '';
 }
@@ -14,3 +12,5 @@ String getBaseWebAddress() {
 }
 
 void clearAddressBar(){}
+
+void simulateBrowserBack() {}

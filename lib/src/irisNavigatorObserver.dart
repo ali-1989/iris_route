@@ -13,6 +13,7 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
   static final StackList<String> _currentRoutedList = StackList();
   static final List<MapEntry<int, String>> _routeToLabel = [];
   static final List<IrisPageRoute> allAppRoutes = [];
+  static IrisPageRoute? notFoundRoute;
   static String homeName = '';
 
   IrisNavigatorObserver._();
@@ -20,6 +21,8 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
   static IrisNavigatorObserver instance(){
     return _instance;
   }
+
+  // MaterialNavigatorKey.currentState    <==>    route.navigator
 
   @override
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
@@ -29,7 +32,6 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
       return;
     }*/
 
-    /// MaterialNavigatorKey.currentState    <==>    route.navigator
     String? name = route.settings.name;
 
     if(name == '/') {
@@ -107,30 +109,40 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
   }
 
   static Route? onUnknownRoute(RouteSettings settings) {
-    print('########## onUnknownRoute');
     return null;
   }
 
+  /// this method will call:
+  /// on Web: on first launch, if address bar has extra of base url. [www.domain.com/x]
+  /// settings.name == /page1?k1=v1#first
   static Route? onGenerateRoute(RouteSettings settings) {
-    if(kIsWeb){
-      print('########## onGenerateRoute ${settings.name}, ${settings.arguments}');
-      if(_currentRoutedList.isEmpty && web.getCurrentWebAddress() != web.getBaseWebAddress()) {
-        final address = web.getCurrentWebAddress();
-        final lastPath = _getLastPart(address);
+    print('########## onGenerateRoute ${settings.name}, ${settings.arguments}');
+    //if(_currentRoutedList.isEmpty) { // && web.getCurrentWebAddress() != web.getBaseWebAddress()
 
-        for(final r in allAppRoutes){
-          if(r.routeName.toLowerCase() == lastPath.toLowerCase()){
+    final address = web.getCurrentWebAddress();
+    final lastPath = getLastPathSegment(address);
 
-            return MaterialPageRoute(
-                builder: (ctx){
-                  return r.view;
-                },
-                settings: settings);
-          }
-        }
+    for(final r in allAppRoutes){
+      if(r.routeName.toLowerCase() == lastPath.toLowerCase()){
+        return MaterialPageRoute(
+            builder: (ctx){
+              return r.view;
+            },
+            settings: settings,
+        );
       }
     }
 
+    if(notFoundRoute != null){
+      return MaterialPageRoute(
+        builder: (ctx){
+          return notFoundRoute!.view;
+        },
+        settings: settings,
+      );
+    }
+
+    /// after this, didPush() will call with '/' address
     return null;
   }
 
@@ -154,6 +166,11 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
     }
 
     web.changeAddressBar(url);
+  }
+
+  /// [reload]: if be false, can not use Back button on browser
+  static void setAddressBar(String url, {bool reload = false}){
+    web.changeAddressBar(url, reload: reload);
   }
 
   static String appBaseUrl(){
@@ -188,7 +205,7 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
     return _currentRoutedList.toList();
   }
 
-  static String _getLastPart(String address){
+  static String getLastPathSegment(String address){
     final split = address.split('/');
 
     if(split.length > 1){
@@ -212,6 +229,31 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
     }
 
     return address;
+  }
+
+  static String getPathQuery(String address){
+    final split = address.split('/');
+    var query = address;
+
+    if(split.isNotEmpty){
+      query = split.last;
+    }
+
+    int idxQuestionMark = query.indexOf('?');
+    int idxSharpMark = query.indexOf('#');
+
+    //int idx = MathHelper.minInt(idxQuestionMark, idxSharpMark);
+    int idx = idxQuestionMark;
+
+    if(idx < 0){
+      idx = idxSharpMark;
+    }
+
+    if(idx > 0){
+      return query.substring(idx);
+    }
+
+    return query;
   }
 
   static String _generateKey(int len){

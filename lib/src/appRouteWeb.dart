@@ -3,18 +3,18 @@ import 'dart:html' as html;
 import 'package:flutter/foundation.dart';
 
 void changeAddressBar(String url, {dynamic data, bool reload = false}) async {
-  //final location = '${html.window.location.protocol}//${html.window.location.host + (html.window.location.pathname?? '')}';
-  // html.window.location.href == location
-  /// html.window.location.href = location   : this is reload page
+  // final location = '${html.window.location.protocol}//${html.window.location.host + (html.window.location.pathname?? '')}';
+  // html.window.location.href <==> location
+  /// html.window.location.href = xxx   : this do reload page
+
   if(!kIsWeb) {
     return;
   }
 
   data ??= html.window.history.state;
+  var base = getBaseWebAddress();
 
-  if(!url.toLowerCase().startsWith(getBaseWebAddress())){
-    var base = getBaseWebAddress();
-
+  if(!url.toLowerCase().startsWith(base)){
     if(base.endsWith('/')){
       url = '$base$url';
     }
@@ -44,7 +44,7 @@ void clearAddressBar() {
   if(!kIsWeb) {
     return;
   }
-  print('@@@@@@@@@@ clear');
+
   final location = '${html.window.location.protocol}//${html.window.location.host}/';
   html.window.history.replaceState(html.window.history.state, '', location);
 }
@@ -65,7 +65,6 @@ String getCurrentWebAddress() {
   return html.window.location.href;
 }
 
-void backAddressBar() {
-  print('@@@@@@@@@@ back');
+void simulateBrowserBack() {
   html.window.history.back();
 }
