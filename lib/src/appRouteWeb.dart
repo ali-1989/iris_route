@@ -32,14 +32,14 @@ void changeAddressBar(String url, {dynamic data, bool reload = false}) async {
   }
 
   print('@@@@@@@@@@ change to B: $url');
-  if(reload) {
+  /*if(reload) {
     // can press Back button
     html.window.history.pushState(data, '', url);
   }
   else {
     // can not press Back button
     html.window.history.replaceState(data, '', url);
-  }
+  }*/
 }
 
 void clearAddressBar() {

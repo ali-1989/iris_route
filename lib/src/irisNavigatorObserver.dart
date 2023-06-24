@@ -33,7 +33,6 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
     }*/
 
     String? name = route.settings.name;
-    print('########## push > settings: $name ');
 
     if(name == '/') {
       _currentRoutedList.clear();
@@ -51,7 +50,6 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
       _currentRoutedList.push(name);
     }
 
-    print('########## push to $name ');
     _changeAddressBarOnWeb();
   }
 
@@ -60,7 +58,6 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
     super.didPop(route, previousRoute);
 
     _currentRoutedList.pop();
-    print('########## pop');
     _changeAddressBarOnWeb();
   }
 
@@ -81,7 +78,6 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
       _currentRoutedList.popUntil(name);
     }
 
-    print('########## remove');
     _changeAddressBarOnWeb();
   }
 
@@ -105,7 +101,6 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
       _currentRoutedList.push(name);
     }
 
-    print('########## replace');
     _changeAddressBarOnWeb();
   }
 
@@ -117,9 +112,6 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
   /// on Web: on first launch, if address bar has extra of base url. [www.domain.com/x]
   /// settings.name == /page1?k1=v1#first
   static Route? onGenerateRoute(RouteSettings settings) {
-    print('############################ onGenerateRoute ${settings.name}');
-    //if(_currentRoutedList.isEmpty) { // && web.getCurrentWebAddress() != web.getBaseWebAddress()
-
     final address = web.getCurrentWebAddress();
     final lastPath = getLastPathSegmentWithoutQuery(address);
 
@@ -176,7 +168,7 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
     if(query.isNotEmpty) {
       url += '?$query';
     }*/
-    print('####### last url: $url,   x:$lastPage');
+
     web.changeAddressBar(url);
   }
 
