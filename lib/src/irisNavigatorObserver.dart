@@ -166,12 +166,17 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
       url += '$sec/';
     }
 
-    final query = getPathQuery(web.getCurrentWebAddress());
+    final lastPage = getLastPathSegmentWitQuery(web.getCurrentWebAddress());
+
+    if(!url.endsWith(lastPage)){
+      url += lastPage;
+    }
+    /*final query = getPathQuery(web.getCurrentWebAddress());
 
     if(query.isNotEmpty) {
       url += '?$query';
-    }
-    print('####### last url: $url');
+    }*/
+    print('####### last url: $url,   x:$lastPage');
     web.changeAddressBar(url);
   }
 
@@ -214,6 +219,16 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
 
   static List<String> currentRoutes(){
     return _currentRoutedList.toList();
+  }
+
+  static String getLastPathSegmentWitQuery(String address){
+    final split = address.split('/');
+
+    if(split.length > 1){
+      return split.last;
+    }
+
+    return address;
   }
 
   static String getLastPathSegmentWithoutQuery(String address){
