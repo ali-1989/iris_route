@@ -10,9 +10,9 @@ if (dart.library.html) 'package:iris_route/src/appRouteWeb.dart' as web;
 
 class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or RouteObserver*/ {
   static final IrisNavigatorObserver _instance = IrisNavigatorObserver._();
-  static final StackList<String> _routeList = StackList();
+  static final StackList<String> _currentRoutedList = StackList();
   static final List<MapEntry<int, String>> _routeToLabel = [];
-  static final List<WebRoute> webRoutes = [];
+  static final List<IrisPageRoute> allAppRoutes = [];
   static String homeName = '';
 
   IrisNavigatorObserver._();
@@ -29,11 +29,11 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
       return;
     }*/
 
-    /// AppBroadcast.rootNavigatorKey.currentState    <==>    route.navigator
+    /// MaterialNavigatorKey.currentState    <==>    route.navigator
     String? name = route.settings.name;
 
     if(name == '/') {
-      _routeList.clear();
+      _currentRoutedList.clear();
     }
     else {
       if (homeName.toLowerCase() == name?.toLowerCase()) {
@@ -45,20 +45,20 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
         _routeToLabel.add(MapEntry(route.hashCode, name));
       }
 
-      _routeList.push(name);
+      _currentRoutedList.push(name);
     }
 
-    print('########## push');
-    _changeAddressBar();
+    print('########## push $name |  ${route.settings.name}');
+    _changeAddressBarOnWeb();
   }
 
   @override
   void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
     super.didPop(route, previousRoute);
 
-    _routeList.pop();
+    _currentRoutedList.pop();
     print('########## pop');
-    _changeAddressBar();
+    _changeAddressBarOnWeb();
   }
 
   @override
@@ -70,16 +70,16 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
     if(name == null){
       for(final kv in _routeToLabel){
         if(kv.key == route.hashCode){
-          _routeList.popUntil(kv.value);
+          _currentRoutedList.popUntil(kv.value);
         }
       }
     }
     else {
-      _routeList.popUntil(name);
+      _currentRoutedList.popUntil(name);
     }
 
     print('########## remove');
-    _changeAddressBar();
+    _changeAddressBarOnWeb();
   }
 
   @override
@@ -90,7 +90,7 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
 
     if(homeName.toLowerCase() == name?.toLowerCase()){
       name = '/';
-      _routeList.push(name);
+      _currentRoutedList.push(name);
     }
     else {
       if(name == null){
@@ -98,12 +98,12 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
         _routeToLabel.add(MapEntry(newRoute.hashCode, name));
       }
 
-      _routeList.pop();
-      _routeList.push(name);
+      _currentRoutedList.pop();
+      _currentRoutedList.push(name);
     }
 
     print('########## replace');
-    _changeAddressBar();
+    _changeAddressBarOnWeb();
   }
 
   static Route? onUnknownRoute(RouteSettings settings) {
@@ -113,12 +113,12 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
 
   static Route? onGenerateRoute(RouteSettings settings) {
     if(kIsWeb){
-      print('########## onGenerateRoute');
-      if(_routeList.isEmpty && web.getCurrentWebAddress() != web.getBaseWebAddress()) {
+      print('########## onGenerateRoute ${settings.name}, ${settings.arguments}');
+      if(_currentRoutedList.isEmpty && web.getCurrentWebAddress() != web.getBaseWebAddress()) {
         final address = web.getCurrentWebAddress();
         final lastPath = _getLastPart(address);
 
-        for(final r in webRoutes){
+        for(final r in allAppRoutes){
           if(r.routeName.toLowerCase() == lastPath.toLowerCase()){
 
             return MaterialPageRoute(
@@ -138,10 +138,14 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
     return route.didPop(result);
   }
 
-  void _changeAddressBar() {
+  void _changeAddressBarOnWeb() {
+    if(!kIsWeb){
+      return;
+    }
+
     String url = '';
 
-    for(final sec in _routeList.toList()){
+    for(final sec in _currentRoutedList.toList()){
       if(sec == '/' || sec.toLowerCase() == homeName.toLowerCase()){
         continue;
       }
@@ -177,11 +181,11 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
   }
 
   static String lastRoute(){
-    return _routeList.top();
+    return _currentRoutedList.top();
   }
 
   static List<String> currentRoutes(){
-    return _routeList.toList();
+    return _currentRoutedList.toList();
   }
 
   static String _getLastPart(String address){
