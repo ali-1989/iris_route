@@ -24,11 +24,12 @@ void changeAddressBar(String url, {dynamic data, bool reload = false}) async {
   }
 
   print('@@@@@@@@@@ change to A :$url');
+
+
+  await Future.delayed(const Duration(milliseconds: 50));
   if(url == getCurrentWebAddress()){
     return;
   }
-
-  await Future.delayed(const Duration(milliseconds: 50));
 
   print('@@@@@@@@@@ change to B: $url');
   if(reload) {
