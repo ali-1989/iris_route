@@ -117,7 +117,7 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
   /// on Web: on first launch, if address bar has extra of base url. [www.domain.com/x]
   /// settings.name == /page1?k1=v1#first
   static Route? onGenerateRoute(RouteSettings settings) {
-    print('########## onGenerateRoute ${settings.name}');
+    print('############################ onGenerateRoute ${settings.name}');
     //if(_currentRoutedList.isEmpty) { // && web.getCurrentWebAddress() != web.getBaseWebAddress()
 
     final address = web.getCurrentWebAddress();
@@ -167,7 +167,7 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
     }
 
     url += getPathQuery(web.getCurrentWebAddress());
-    print('####### last; $url');
+    print('####### last url: $url');
     web.changeAddressBar(url);
   }
 
@@ -256,7 +256,7 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
       idx = idxSharpMark;
     }
 
-    if(idx > 0){
+    if(idx > -1){
       return query.substring(idx+1);
     }
 
