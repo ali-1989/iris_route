@@ -33,6 +33,7 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
     }*/
 
     String? name = route.settings.name;
+    print('########## push > settings: $name ');
 
     if(name == '/') {
       _currentRoutedList.clear();
@@ -50,7 +51,7 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
       _currentRoutedList.push(name);
     }
 
-    print('########## push $name |  ${route.settings.name}');
+    print('########## push to $name ');
     _changeAddressBarOnWeb();
   }
 
@@ -116,7 +117,7 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
   /// on Web: on first launch, if address bar has extra of base url. [www.domain.com/x]
   /// settings.name == /page1?k1=v1#first
   static Route? onGenerateRoute(RouteSettings settings) {
-    print('########## onGenerateRoute ${settings.name}, ${settings.arguments}');
+    print('########## onGenerateRoute ${settings.name}');
     //if(_currentRoutedList.isEmpty) { // && web.getCurrentWebAddress() != web.getBaseWebAddress()
 
     final address = web.getCurrentWebAddress();
@@ -165,11 +166,17 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
       url += '$sec/';
     }
 
+    url += getPathQuery(web.getCurrentWebAddress());
+    print('####### last; $url');
     web.changeAddressBar(url);
   }
 
   /// [reload]: if be false, can not use Back button on browser
   static void setAddressBar(String url, {bool reload = false}){
+    if(!kIsWeb){
+      return;
+    }
+
     web.changeAddressBar(url, reload: reload);
   }
 
