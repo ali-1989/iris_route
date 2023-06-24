@@ -120,7 +120,7 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
     //if(_currentRoutedList.isEmpty) { // && web.getCurrentWebAddress() != web.getBaseWebAddress()
 
     final address = web.getCurrentWebAddress();
-    final lastPath = getLastPathSegment(address);
+    final lastPath = getLastPathSegmentWithoutQuery(address);
 
     for(final r in allAppRoutes){
       if(r.routeName.toLowerCase() == lastPath.toLowerCase()){
@@ -205,7 +205,7 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
     return _currentRoutedList.toList();
   }
 
-  static String getLastPathSegment(String address){
+  static String getLastPathSegmentWithoutQuery(String address){
     final split = address.split('/');
 
     if(split.length > 1){
@@ -221,7 +221,7 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
         idx = idxSharpMark;
       }
 
-      if(idx > 0){
+      if(idx > -1){
         return last.substring(0, idx);
       }
 
@@ -250,7 +250,7 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
     }
 
     if(idx > 0){
-      return query.substring(idx);
+      return query.substring(idx+1);
     }
 
     return query;
