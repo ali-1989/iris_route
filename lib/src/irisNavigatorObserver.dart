@@ -166,7 +166,11 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
       url += '$sec/';
     }
 
-    url += getPathQuery(web.getCurrentWebAddress());
+    final query = getPathQuery(web.getCurrentWebAddress());
+
+    if(query.isNotEmpty) {
+      url += '?$querry';
+    }
     print('####### last url: $url');
     web.changeAddressBar(url);
   }
