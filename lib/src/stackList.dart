@@ -94,10 +94,4 @@ class StackList<T> {
   }
 
   List<T> toList() => _list.toList();
-
-/*void print() {
-    for (var item in List<T>.from(_list).reversed) {
-      core.print(item);
-    }
-  }*/
 }

@@ -8,12 +8,14 @@ import 'package:iris_route/src/appRouteNoneWeb.dart'
 if (dart.library.html) 'package:iris_route/src/appRouteWeb.dart' as web;
 
 
+typedef OnNotFound = Route? Function(RouteSettings settings);
+///=======================================================================
 class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or RouteObserver*/ {
   static final IrisNavigatorObserver _instance = IrisNavigatorObserver._();
   static final StackList<String> _currentRoutedList = StackList();
   static final List<MapEntry<int, String>> _routeToLabel = [];
   static final List<IrisPageRoute> allAppRoutes = [];
-  static IrisPageRoute? notFoundRoute;
+  static OnNotFound? notFoundHandler;
   static String homeName = '';
 
   IrisNavigatorObserver._();
@@ -126,13 +128,8 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
       }
     }
 
-    if(notFoundRoute != null){
-      return MaterialPageRoute(
-        builder: (ctx){
-          return notFoundRoute!.view;
-        },
-        settings: settings,
-      );
+    if(notFoundHandler != null){
+      return notFoundHandler!.call(settings);
     }
 
     /// after this, didPush() will call with '/' address
@@ -159,7 +156,6 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
     }
 
     final lastPage = getLastPathSegmentWitQuery(web.getCurrentWebAddress());
-    print('###### cange 1: url:$url, last:$lastPage');
 
     if(!url.endsWith(lastPage) && !url.endsWith('$lastPage/')){
       url += lastPage;
@@ -169,7 +165,6 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
     if(query.isNotEmpty) {
       url += '?$query';
     }*/
-    print('###### cange 2: url:$url ');
 
     web.changeAddressBar(url);
   }
