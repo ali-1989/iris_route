@@ -89,7 +89,7 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
 
     for (final lis in _eventListener) {
       try{
-        lis.call(route, NavigateState.push);
+        lis.call(route, NavigateState.pop);
       }
       catch (e){/**/}
     }

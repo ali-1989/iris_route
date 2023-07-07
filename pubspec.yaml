@@ -1,6 +1,6 @@
 name: iris_route
 description: A package for routing and navigation.
-version: 0.0.29
+version: 0.0.30
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
