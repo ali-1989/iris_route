@@ -9,7 +9,7 @@ if (dart.library.html) 'package:iris_route/src/appRouteWeb.dart' as web;
 
 
 typedef OnNotFound = Route? Function(RouteSettings settings);
-typedef EventListener = Route? Function(Route? route, NavigateState state);
+typedef EventListener = void Function(Route? route, NavigateState state);
 ///=======================================================================
 enum NavigateState {
   push,
