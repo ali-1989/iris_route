@@ -9,12 +9,21 @@ if (dart.library.html) 'package:iris_route/src/appRouteWeb.dart' as web;
 
 
 typedef OnNotFound = Route? Function(RouteSettings settings);
+typedef EventListener = Route? Function(Route? route, NavigateState state);
+///=======================================================================
+enum NavigateState {
+  push,
+  pop,
+  replace,
+  remove,
+}
 ///=======================================================================
 class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or RouteObserver*/ {
   static final IrisNavigatorObserver _instance = IrisNavigatorObserver._();
   static final StackList<String> _currentRoutedList = StackList();
   static final List<MapEntry<int, String>> _routeToLabel = [];
   static final List<IrisPageRoute> allAppRoutes = [];
+  static final List<EventListener> _eventListener = [];
   static OnNotFound? notFoundHandler;
   static String homeName = '';
 
@@ -24,8 +33,17 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
     return _instance;
   }
 
-  // MaterialNavigatorKey.currentState    <==>    route.navigator
+  static void addEventListener(EventListener listener){
+    if(!_eventListener.contains(listener)){
+      _eventListener.add(listener);
+    }
+  }
 
+  static void removeEventListener(EventListener listener){
+    _eventListener.remove(listener);
+  }
+
+  // MaterialNavigatorKey.currentState    <==>    route.navigator
   @override
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
     super.didPush(route, previousRoute);
@@ -53,6 +71,13 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
     }
 
     _changeAddressBarOnWeb();
+
+    for (final lis in _eventListener) {
+      try{
+        lis.call(route, NavigateState.push);
+      }
+      catch (e){/**/}
+    }
   }
 
   @override
@@ -61,6 +86,13 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
 
     _currentRoutedList.pop();
     _changeAddressBarOnWeb();
+
+    for (final lis in _eventListener) {
+      try{
+        lis.call(route, NavigateState.push);
+      }
+      catch (e){/**/}
+    }
   }
 
   @override
@@ -81,6 +113,13 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
     }
 
     _changeAddressBarOnWeb();
+
+    for (final lis in _eventListener) {
+      try{
+        lis.call(route, NavigateState.remove);
+      }
+      catch (e){/**/}
+    }
   }
 
   @override
@@ -104,6 +143,13 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
     }
 
     _changeAddressBarOnWeb();
+
+    for (final lis in _eventListener) {
+      try{
+        lis.call(newRoute, NavigateState.replace);
+      }
+      catch (e){/**/}
+    }
   }
 
   static Route? onUnknownRoute(RouteSettings settings) {
