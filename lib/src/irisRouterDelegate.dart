@@ -42,7 +42,7 @@ class IrisRouterDelegate<T> extends RouterDelegate<T> with ChangeNotifier, PopNa
       key: _navigatorKey,
       //initialRoute: '/',
       //onUnknownRoute: ,
-      onGenerateRoute: IrisNavigatorObserver.onGenerateRoute,
+      onGenerateRoute: IrisNavigatorObserver.generateRoute,
       observers: [IrisNavigatorObserver.instance()],
       onPopPage: IrisNavigatorObserver.onPopPage,
       pages: [

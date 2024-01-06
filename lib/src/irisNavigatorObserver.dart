@@ -9,21 +9,23 @@ if (dart.library.html) 'package:iris_route/src/appRouteWeb.dart' as web;
 
 
 typedef OnNotFound = Route? Function(RouteSettings settings);
+typedef OnGenerateRoute = Route? Function(RouteSettings settings, Route? route);
 typedef EventListener = void Function(Route? route, NavigateState state);
-///=======================================================================
+///=============================================================================
 enum NavigateState {
   push,
   pop,
   replace,
   remove,
 }
-///=======================================================================
+///=============================================================================
 class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or RouteObserver*/ {
   static final IrisNavigatorObserver _instance = IrisNavigatorObserver._();
   static final StackList<String> _currentRoutedList = StackList();
   static final List<MapEntry<int, String>> _routeToLabel = [];
   static final List<IrisPageRoute> allAppRoutes = [];
   static final List<EventListener> _eventListener = [];
+  static OnGenerateRoute? onGenerateRoute;
   static OnNotFound? notFoundHandler;
   static String homeName = '';
 
@@ -46,13 +48,13 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
   // MaterialNavigatorKey.currentState    <==>    route.navigator
   @override
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    String? name = route.settings.name;
+
     super.didPush(route, previousRoute);
 
     /*if(route is! PageRoute){
       return;
     }*/
-
-    String? name = route.settings.name;
 
     if(name == '/') {
       _currentRoutedList.clear();
@@ -63,7 +65,7 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
       }
 
       if (name == null) {
-        name = _generateKey(10);
+        name = '/${_generateKey(10)}';
         _routeToLabel.add(MapEntry(route.hashCode, name));
       }
 
@@ -159,13 +161,14 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
   /// this method will call:
   /// on Web: on first launch, if address bar has extra of base url. [www.domain.com/x]
   /// settings.name == /page1?k1=v1#first
-  static Route? onGenerateRoute(RouteSettings settings) {
+  static Route? generateRoute(RouteSettings settings) {
     final address = web.getCurrentWebAddress();
     final lastPath = getLastPathSegmentWithoutQuery(address);
+    Route? result;
 
     for(final r in allAppRoutes){
       if(r.routeName.toLowerCase() == lastPath.toLowerCase()){
-        return MaterialPageRoute(
+        result = MaterialPageRoute(
             builder: (ctx){
               return r.view;
             },
@@ -174,12 +177,16 @@ class IrisNavigatorObserver extends NavigatorObserver  /*NavigatorObserver or Ro
       }
     }
 
-    if(notFoundHandler != null){
+    if(result == null && notFoundHandler != null){
       return notFoundHandler!.call(settings);
     }
 
-    /// after this, didPush() will call with '/' address
-    return null;
+    if(onGenerateRoute != null){
+      result = onGenerateRoute?.call(settings, result);
+    }
+
+    /// if result be null, didPush() will call with '/' address
+    return result;
   }
 
   static bool onPopPage(Route<dynamic> route, result) {
